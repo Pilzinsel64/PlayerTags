@@ -54,28 +54,32 @@ namespace Pilz.Dalamud.ActivityContexts
             }
             else
             {
-                // Check for ActivityContext
                 if (content.PvP)
+                {
                     newActivityContext = ActivityType.PvpDuty;
+                    newZoneType = ZoneType.Pvp;
+                }
                 else
+                {
                     newActivityContext = ActivityType.PveDuty;
 
-                // Find correct member type
-                var memberType = content.ContentMemberType.Row;
-                if (content.RowId == 16 || content.RowId == 15)
-                    memberType = 2; // Praetorium and Castrum Meridianum
-                else if (content.RowId == 735 || content.RowId == 778)
-                    memberType = 127; // Bozja
+                    // Find correct member type
+                    var memberType = content.ContentMemberType.Row;
+                    if (content.RowId == 16 || content.RowId == 15)
+                        memberType = 2; // Praetorium and Castrum Meridianum
+                    else if (content.RowId == 735 || content.RowId == 778)
+                        memberType = 127; // Bozja
 
-                // Check for ZoneType
-                newZoneType = memberType switch
-                {
-                    2 => ZoneType.Dungeon,
-                    3 => ZoneType.Raid,
-                    4 => ZoneType.AllianceRaid,
-                    127 => ZoneType.Foray,
-                    _ => ZoneType.Dungeon,
-                };
+                    // Check for ZoneType
+                    newZoneType = memberType switch
+                    {
+                        2 => ZoneType.Dungeon,
+                        3 => ZoneType.Raid,
+                        4 => ZoneType.AllianceRaid,
+                        127 => ZoneType.Foray,
+                        _ => ZoneType.Dungeon,
+                    };
+                }
             }
 
             CurrentActivityContext = new(newActivityContext, newZoneType);

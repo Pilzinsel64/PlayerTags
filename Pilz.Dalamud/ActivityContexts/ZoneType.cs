@@ -15,6 +15,7 @@ namespace Pilz.Dalamud.ActivityContexts
         Dungeon,
         Raid,
         AllianceRaid,
-        Foray
+        Foray,
+        Pvp
     }
 }
