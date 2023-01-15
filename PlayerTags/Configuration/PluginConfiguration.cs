@@ -24,12 +24,35 @@ namespace PlayerTags.Configuration
         public int Version { get; set; } = DEFAULT_CONFIG_VERSION;
         public bool IsVisible = false;
 
-        [JsonProperty("GeneralOptionsV2")]
-        public Dictionary<ActivityType, GeneralOptionsClass> GeneralOptions = new()
+        [JsonProperty("GeneralOptionsV2"), Obsolete]
+        private Dictionary<ActivityType, GeneralOptionsClass> GeneralOptionsV2
         {
-            { ActivityType.None, new GeneralOptionsClass() },
-            { ActivityType.PveDuty, new GeneralOptionsClass() },
-            { ActivityType.PvpDuty, new GeneralOptionsClass() }
+            set
+            {
+                void copyOverSettings(ActivityType srcType, ZoneType destType)
+                {
+                    var src = value[srcType];
+                    var dest = GeneralOptions[destType];
+                    dest.IsApplyTagsToAllChatMessagesEnabled = src.IsApplyTagsToAllChatMessagesEnabled;
+                    dest.NameplateDeadPlayerHandling = src.NameplateDeadPlayerHandling;
+                    dest.NameplateFreeCompanyVisibility = src.NameplateFreeCompanyVisibility;
+                    dest.NameplateTitlePosition = src.NameplateTitlePosition;
+                    dest.NameplateTitleVisibility = src.NameplateTitleVisibility;
+                }
+
+                copyOverSettings(ActivityType.None, ZoneType.Overworld);
+                copyOverSettings(ActivityType.PvpDuty, ZoneType.Pvp);
+                copyOverSettings(ActivityType.PveDuty, ZoneType.Dungeon);
+                copyOverSettings(ActivityType.PveDuty, ZoneType.Raid);
+                copyOverSettings(ActivityType.PveDuty, ZoneType.AllianceRaid);
+                copyOverSettings(ActivityType.PveDuty, ZoneType.Foray);
+            }
+        }
+
+        [JsonProperty("GeneralOptionsV3")]
+        public Dictionary<ZoneType, GeneralOptionsClass> GeneralOptions = new()
+        {
+            { ZoneType.Overworld, new GeneralOptionsClass() }
         };
 
         public DefaultPluginDataTemplate DefaultPluginDataTemplate = DefaultPluginDataTemplate.Simple;
@@ -78,18 +101,6 @@ namespace PlayerTags.Configuration
         public List<Identity> Identities = new List<Identity>();
 
         #region Obsulate Properties
-
-        [Obsolete]
-        [JsonProperty("GeneralOptions")]
-        private Dictionary<Data.ActivityContext, GeneralOptionsClass> GeneralOptionsV1
-        {
-            set
-            {
-                GeneralOptions.Clear();
-                foreach (var kvp in value)
-                    GeneralOptions.Add((ActivityType)kvp.Key, kvp.Value);
-            }
-        }
 
         [JsonProperty("NameplateFreeCompanyVisibility"), Obsolete]
         private NameplateFreeCompanyVisibility NameplateFreeCompanyVisibilityV1
