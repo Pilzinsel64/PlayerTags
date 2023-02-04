@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 
 namespace Pilz.Dalamud.ActivityContexts
 {
-    [JsonConverter(typeof(StringEnumConverter))]
+    [Flags, JsonConverter(typeof(StringEnumConverter))]
     public enum ZoneType
     {
-        Overworld,
-        Dungeon,
-        Raid,
-        AllianceRaid,
-        Foray,
-        Pvp
+        Overworld = 1,
+        Doungen = 2,
+        Raid = 4,
+        AllianceRaid = 8,
+        Foray = 16,
+        Pvp = 32,
+        Everywhere = int.MaxValue
     }
 }

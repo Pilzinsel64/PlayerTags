@@ -20,18 +20,16 @@ namespace PlayerTags.Features
     /// <summary>
     /// The base of a feature that adds tags to UI elements.
     /// </summary>
-    public abstract class TagTargetFeature : IDisposable
+    public abstract class TagTargetFeature : FeatureBase
     {
-        public ActivityContextManager ActivityContextManager { get; init; }
 
         public TagTargetFeature()
         {
-            ActivityContextManager = new();
         }
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
-            ActivityContextManager.Dispose();
+            base.Dispose();
         }
 
         protected abstract bool IsIconVisible(Tag tag);

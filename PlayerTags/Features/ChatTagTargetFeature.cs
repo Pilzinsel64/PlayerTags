@@ -121,7 +121,7 @@ namespace PlayerTags.Features
 
         private void Chat_ChatMessage(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
         {
-            if (m_PluginConfiguration.GeneralOptions[ActivityContextManager.CurrentActivityContext.ActivityType].IsApplyTagsToAllChatMessagesEnabled)
+            if (m_PluginConfiguration.ZoneConfig[ActivityContextManager.CurrentActivityContext.ZoneType].IsApplyTagsToAllChatMessagesEnabled)
             {
                 AddTagsToChat(sender, type, true);
                 AddTagsToChat(message, type, false);
@@ -335,7 +335,9 @@ namespace PlayerTags.Features
             if (isSender)
                 SplitOffPartyNumberPrefix(message, chatType);
 
+            var tagsData = m_PluginData.GetTagsData(ActivityContextManager.CurrentActivityContext.ZoneType);
             var stringMatches = GetStringMatches(message);
+
             foreach (var stringMatch in stringMatches)
             {
                 StringChanges stringChanges = new();
@@ -347,7 +349,7 @@ namespace PlayerTags.Features
                 if (stringMatch.GameObject is PlayerCharacter playerCharacter)
                 {
                     // Add the job tag
-                    if (playerCharacter.ClassJob.GameData != null && m_PluginData.JobTags.TryGetValue(playerCharacter.ClassJob.GameData.Abbreviation, out var jobTag))
+                    if (playerCharacter.ClassJob.GameData != null && tagsData.JobTags.TryGetValue(playerCharacter.ClassJob.GameData.Abbreviation, out var jobTag))
                     {
                         if (isTagEnabled(jobTag))
                         {
@@ -378,10 +380,10 @@ namespace PlayerTags.Features
                 // Add custom tags
                 if (stringMatch.PlayerPayload != null)
                 {
-                    Identity identity = m_PluginData.GetIdentity(stringMatch.PlayerPayload);
+                    Identity identity = tagsData.GetIdentity(stringMatch.PlayerPayload);
                     foreach (var customTagId in identity.CustomTagIds)
                     {
-                        var customTag = m_PluginData.CustomTags.FirstOrDefault(tag => tag.CustomId.Value == customTagId);
+                        var customTag = tagsData.CustomTags.FirstOrDefault(tag => tag.CustomId.Value == customTagId);
                         if (customTag != null)
                         {
                             if (isTagEnabled(customTag))
@@ -407,17 +409,17 @@ namespace PlayerTags.Features
                 // An additional step to apply text color to additional locations
                 if (stringMatch.PlayerPayload != null && stringMatch.DisplayTextPayloads.Any())
                 {
-                    Identity identity = m_PluginData.GetIdentity(stringMatch.PlayerPayload);
+                    Identity identity = tagsData.GetIdentity(stringMatch.PlayerPayload);
 
                     if (stringMatch.GameObject is PlayerCharacter playerCharacter1)
                     {
-                        if (playerCharacter1.ClassJob.GameData != null && m_PluginData.JobTags.TryGetValue(playerCharacter1.ClassJob.GameData.Abbreviation, out var jobTag) && isTagEnabled(jobTag))
+                        if (playerCharacter1.ClassJob.GameData != null && tagsData.JobTags.TryGetValue(playerCharacter1.ClassJob.GameData.Abbreviation, out var jobTag) && isTagEnabled(jobTag))
                             applyTextFormatting(jobTag);
                     }
 
                     foreach (var customTagId in identity.CustomTagIds)
                     {
-                        var customTag = m_PluginData.CustomTags.FirstOrDefault(tag => tag.CustomId.Value == customTagId);
+                        var customTag = tagsData.CustomTags.FirstOrDefault(tag => tag.CustomId.Value == customTagId);
                         if (customTag != null && isTagEnabled(customTag))
                             applyTextFormatting(customTag);
                     }

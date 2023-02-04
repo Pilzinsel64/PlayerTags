@@ -113,9 +113,9 @@ namespace PlayerTags.Features
         {
             var beforeTitleBytes = args.Title.Encode();
             var iconID = args.IconId;
-            var generalOptions = m_PluginConfiguration.GeneralOptions[ActivityContextManager.CurrentActivityContext.ActivityType];
+            var generalOptions = m_PluginConfiguration.ZoneConfig[ActivityContextManager.CurrentActivityContext.ZoneType];
 
-            AddTagsToNameplate(args.PlayerCharacter, args.Name, args.Title, args.FreeCompany, ref iconID, generalOptions);
+            AddTagsToNameplate(args.PlayerCharacter, args.Name, args.Title, args.FreeCompany, ref iconID);
 
             args.IconId = iconID;
 
@@ -172,19 +172,20 @@ namespace PlayerTags.Features
         /// <param name="name">The name text to change.</param>
         /// <param name="title">The title text to change.</param>
         /// <param name="freeCompany">The free company text to change.</param>
-        private void AddTagsToNameplate(GameObject gameObject, SeString name, SeString title, SeString freeCompany, ref int statusIcon, GeneralOptionsClass generalOptions)
+        private void AddTagsToNameplate(GameObject gameObject, SeString name, SeString title, SeString freeCompany, ref int statusIcon)
         {
+            var tagsData = m_PluginConfiguration.ZoneConfig[ActivityContextManager.CurrentActivityContext.ZoneType];
             var playerCharacter = gameObject as PlayerCharacter;
             int? newStatusIcon = null;
             NameplateChanges nameplateChanges = GenerateEmptyNameplateChanges(name, title, freeCompany);
 
-            if (playerCharacter != null && (!playerCharacter.IsDead || generalOptions.NameplateDeadPlayerHandling != DeadPlayerHandling.Ignore))
+            if (playerCharacter != null && (!playerCharacter.IsDead || tagsData.NameplateDeadPlayerHandling != DeadPlayerHandling.Ignore))
             {
                 var classJob = playerCharacter.ClassJob;
                 var classJobGameData = classJob?.GameData;
 
                 // Add the job tags
-                if (classJobGameData != null && m_PluginData.JobTags.TryGetValue(classJobGameData.Abbreviation, out var jobTag))
+                if (classJobGameData != null && tagsData.JobTags.TryGetValue(classJobGameData.Abbreviation, out var jobTag))
                 {
                     if (jobTag.TagTargetInNameplates.InheritedValue != null && jobTag.TagPositionInNameplates.InheritedValue != null)
                         checkTag(jobTag);
@@ -203,10 +204,10 @@ namespace PlayerTags.Features
                 }
 
                 // Add custom tags
-                Identity identity = m_PluginData.GetIdentity(playerCharacter);
+                Identity identity = tagsData.GetIdentity(playerCharacter);
                 foreach (var customTagId in identity.CustomTagIds)
                 {
-                    var customTag = m_PluginData.CustomTags.FirstOrDefault(tag => tag.CustomId.Value == customTagId);
+                    var customTag = tagsData.CustomTags.FirstOrDefault(tag => tag.CustomId.Value == customTagId);
                     if (customTag != null)
                         checkTag(customTag);
                 }
@@ -232,24 +233,24 @@ namespace PlayerTags.Features
             }
 
             // Gray out the nameplate
-            if (playerCharacter != null && playerCharacter.IsDead && generalOptions.NameplateDeadPlayerHandling == DeadPlayerHandling.GrayOut)
+            if (playerCharacter != null && playerCharacter.IsDead && tagsData.NameplateDeadPlayerHandling == DeadPlayerHandling.GrayOut)
                 GrayOutNameplate(gameObject, nameplateChanges);
 
             // Build the final strings out of the payloads
             ApplyNameplateChanges(nameplateChanges);
 
-            if (playerCharacter != null && (!playerCharacter.IsDead || generalOptions.NameplateDeadPlayerHandling == DeadPlayerHandling.Include))
+            if (playerCharacter != null && (!playerCharacter.IsDead || tagsData.NameplateDeadPlayerHandling == DeadPlayerHandling.Include))
             {
                 // An additional step to apply text color to additional locations
-                Identity identity = m_PluginData.GetIdentity(playerCharacter);
+                Identity identity = tagsData.GetIdentity(playerCharacter);
                 foreach (var customTagId in identity.CustomTagIds)
                 {
-                    var customTag = m_PluginData.CustomTags.FirstOrDefault(tag => tag.CustomId.Value == customTagId);
+                    var customTag = tagsData.CustomTags.FirstOrDefault(tag => tag.CustomId.Value == customTagId);
                     if (customTag != null)
                         applyTextFormatting(customTag);
                 }
 
-                if (playerCharacter.ClassJob.GameData != null && m_PluginData.JobTags.TryGetValue(playerCharacter.ClassJob.GameData.Abbreviation, out var jobTag))
+                if (playerCharacter.ClassJob.GameData != null && tagsData.JobTags.TryGetValue(playerCharacter.ClassJob.GameData.Abbreviation, out var jobTag))
                     applyTextFormatting(jobTag);
 
                 void applyTextFormatting(Tag tag)

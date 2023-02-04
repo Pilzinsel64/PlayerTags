@@ -73,11 +73,11 @@ namespace Pilz.Dalamud.ActivityContexts
                     // Check for ZoneType
                     newZoneType = memberType switch
                     {
-                        2 => ZoneType.Dungeon,
+                        2 => ZoneType.Doungen,
                         3 => ZoneType.Raid,
                         4 => ZoneType.AllianceRaid,
                         127 => ZoneType.Foray,
-                        _ => ZoneType.Dungeon,
+                        _ => ZoneType.Doungen,
                     };
                 }
             }

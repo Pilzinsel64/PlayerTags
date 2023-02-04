@@ -1,6 +1,7 @@
 ﻿using Dalamud.ContextMenu;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Logging;
+using Pilz.Dalamud.ActivityContexts;
 using PlayerTags.Configuration;
 using PlayerTags.Data;
 using PlayerTags.Resources;
@@ -13,7 +14,7 @@ namespace PlayerTags.Features
     /// <summary>
     /// A feature that adds options for the management of custom tags to context menus.
     /// </summary>
-    public class CustomTagsContextMenuFeature : IDisposable
+    public class CustomTagsContextMenuFeature : FeatureBase
     {
         private string?[] SupportedAddonNames = new string?[]
         {
@@ -44,7 +45,7 @@ namespace PlayerTags.Features
             m_ContextMenu.OnOpenGameObjectContextMenu += ContextMenuHooks_ContextMenuOpened;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             if (m_ContextMenu != null)
             {
@@ -52,21 +53,22 @@ namespace PlayerTags.Features
                 ((IDisposable)m_ContextMenu).Dispose();
                 m_ContextMenu = null;
             }
+            base.Dispose();
         }
 
         private void ContextMenuHooks_ContextMenuOpened(GameObjectContextMenuOpenArgs contextMenuOpenedArgs)
         {
             if (!m_PluginConfiguration.IsCustomTagsContextMenuEnabled
                 || !SupportedAddonNames.Contains(contextMenuOpenedArgs.ParentAddonName))
-            {
                 return;
-            }
 
-            Identity? identity = m_PluginData.GetIdentity(contextMenuOpenedArgs);
+            var tagsData = m_PluginData.GetTagsData(ActivityContextManager.CurrentActivityContext.ZoneType);
+            Identity? identity = tagsData.GetIdentity(contextMenuOpenedArgs);
+            
             if (identity != null)
             {
                 var allTags = new Dictionary<Tag, bool>();
-                foreach (var customTag in m_PluginData.CustomTags)
+                foreach (var customTag in tagsData.CustomTags)
                 {
                     var isAdded = identity.CustomTagIds.Contains(customTag.CustomId.Value);
                     allTags.Add(customTag, isAdded);
@@ -86,9 +88,9 @@ namespace PlayerTags.Features
                         new GameObjectContextMenuItem(menuItemText, openedEventArgs =>
                         {
                             if (tag.Value)
-                                m_PluginData.RemoveCustomTagFromIdentity(tag.Key, identity);
+                                tagsData.RemoveCustomTagFromIdentity(tag.Key, identity);
                             else
-                                m_PluginData.AddCustomTagToIdentity(tag.Key, identity);
+                                tagsData.AddCustomTagToIdentity(tag.Key, identity);
                             m_PluginConfiguration.Save(m_PluginData);
                         })
                         {
