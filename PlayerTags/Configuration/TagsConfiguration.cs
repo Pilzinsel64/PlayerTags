@@ -9,14 +9,9 @@ using System.Threading.Tasks;
 
 namespace PlayerTags.Configuration
 {
-    public class PluginZoneConfiguration
+    public class TagsConfiguration : ZoneConfigurationBase
     {
         public DefaultPluginDataTemplate DefaultPluginDataTemplate = DefaultPluginDataTemplate.Simple;
-        public NameplateFreeCompanyVisibility NameplateFreeCompanyVisibility = NameplateFreeCompanyVisibility.Default;
-        public NameplateTitleVisibility NameplateTitleVisibility = NameplateTitleVisibility.WhenHasTags;
-        public NameplateTitlePosition NameplateTitlePosition = NameplateTitlePosition.AlwaysAboveName;
-        public DeadPlayerHandling NameplateDeadPlayerHandling = DeadPlayerHandling.Include;
-        public bool IsApplyTagsToAllChatMessagesEnabled = true;
 
         [JsonProperty(TypeNameHandling = TypeNameHandling.None, ItemTypeNameHandling = TypeNameHandling.None)]
         public Dictionary<string, InheritableData> AllTagsChanges = new Dictionary<string, InheritableData>();

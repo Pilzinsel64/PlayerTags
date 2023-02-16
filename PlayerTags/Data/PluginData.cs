@@ -23,13 +23,25 @@ namespace PlayerTags.Data
             ReloadDefault();
         }
 
+        private void EnsureDataExists(ref ZoneType zoneType)
+        {
+            if (pluginConfiguration.TagsConfigs.IsEverywhere)
+                zoneType = ZoneType.Everywhere;
+
+            if (!TagsData.ContainsKey(zoneType))
+                TagsData.Add(zoneType, new PluginTagsData(pluginConfiguration, pluginConfiguration.TagsConfigs.GetConfig(zoneType)));
+        }
+
         public PluginTagsData GetTagsData(ZoneType zoneType)
         {
+            EnsureDataExists(ref zoneType);
             return TagsData[zoneType];
         }
 
         public void ReloadDefault(ZoneType zoneType)
         {
+            EnsureDataExists(ref zoneType);
+
             if (TagsData[zoneType].ReloadDefault())
                 pluginConfiguration.Save(this);
         }

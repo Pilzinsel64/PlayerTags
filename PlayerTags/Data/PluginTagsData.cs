@@ -25,9 +25,9 @@ namespace PlayerTags.Data
         public Tag AllCustomTags;
         public List<Tag> CustomTags;
         public List<Identity> Identities;
-        private readonly PluginZoneConfiguration pluginZonedConfig;
+        private readonly TagsConfiguration pluginZonedConfig;
 
-        public PluginTagsData(PluginConfiguration pluginconfiguration, PluginZoneConfiguration pluginZonedConfiguration)
+        public PluginTagsData(PluginConfiguration pluginconfiguration, TagsConfiguration pluginZonedConfiguration)
         {
             pluginZonedConfig = pluginZonedConfiguration;
             ReloadDefault();

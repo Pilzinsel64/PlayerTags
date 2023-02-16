@@ -24,15 +24,33 @@ namespace PlayerTags.Configuration
         public int Version { get; set; } = DEFAULT_CONFIG_VERSION;
         public bool IsVisible = false;
 
+        public ZoneConfiguration<GeneralConfiguration> GeneralConfigs = new();
+        public ZoneConfiguration<TagsConfiguration> TagsConfigs = new();
+        public StatusIconPriorizerSettings StatusIconPriorizerSettings = new(true);
+        public bool MoveStatusIconToNameplateTextIfPossible = true;
+        public bool IsPlayerNameRandomlyGenerated = false;
+        public bool IsCustomTagsContextMenuEnabled = true;
+        public bool IsShowInheritedPropertiesEnabled = true;
+        public bool IsPlayersTabOrderedByProximity = false;
+        public bool IsPlayersTabSelfVisible = true;
+        public bool IsPlayersTabFriendsVisible  = true;
+        public bool IsPlayersTabPartyVisible = true;
+        public bool IsPlayersTabAllianceVisible = true;
+        public bool IsPlayersTabEnemiesVisible = true;
+        public bool IsPlayersTabOthersVisible = false;
+        public bool IsSimpleUIEnabled = true;
+
+        #region Obsulate Properties
+
         [JsonProperty("GeneralOptionsV2"), Obsolete]
-        private Dictionary<ActivityType, GeneralOptionsClass> GeneralOptionsV2
+        private Dictionary<ActivityType, GeneralConfiguration> GeneralOptionsV2
         {
             set
             {
                 void copyOverSettings(ActivityType srcType, ZoneType destType)
                 {
                     var src = value[srcType];
-                    var dest = ZoneConfig[destType];
+                    var dest = GeneralConfigs.GetConfig(destType);
                     dest.IsApplyTagsToAllChatMessagesEnabled = src.IsApplyTagsToAllChatMessagesEnabled;
                     dest.NameplateDeadPlayerHandling = src.NameplateDeadPlayerHandling;
                     dest.NameplateFreeCompanyVisibility = src.NameplateFreeCompanyVisibility;
@@ -50,70 +68,44 @@ namespace PlayerTags.Configuration
             }
         }
 
-        public Dictionary<ZoneType, PluginZoneConfiguration> ZoneConfig = new()
+        [JsonProperty]
+        [Obsolete]
+        public bool IsApplyToEverywhereEnabled
         {
-            { ZoneType.Overworld, new PluginZoneConfiguration() },
-            { ZoneType.Doungen, new PluginZoneConfiguration() },
-            { ZoneType.Raid, new PluginZoneConfiguration() },
-            { ZoneType.AllianceRaid, new PluginZoneConfiguration() },
-            { ZoneType.Foray, new PluginZoneConfiguration() },
-            { ZoneType.Pvp, new PluginZoneConfiguration() },
-            { ZoneType.Everywhere, new PluginZoneConfiguration() }
-        };
+            set
+            {
+                GeneralConfigs.IsEverywhere = value;
+                TagsConfigs.IsEverywhere = value;
+            }
+        }
 
-        public StatusIconPriorizerSettings StatusIconPriorizerSettings = new(true);
-        public bool MoveStatusIconToNameplateTextIfPossible = true;
-        public bool IsPlayerNameRandomlyGenerated = false;
-        public bool IsCustomTagsContextMenuEnabled = true;
-        public bool IsShowInheritedPropertiesEnabled = true;
-        public bool IsPlayersTabOrderedByProximity = false;
-        public bool IsPlayersTabSelfVisible = true;
-        public bool IsPlayersTabFriendsVisible  = true;
-        public bool IsPlayersTabPartyVisible = true;
-        public bool IsPlayersTabAllianceVisible = true;
-        public bool IsPlayersTabEnemiesVisible = true;
-        public bool IsPlayersTabOthersVisible = false;
-        public bool IsSimpleUIEnabled = true;
-        public bool IsApplyToEverywhereEnabled = true;
-
-        #region Obsulate Properties
+        [JsonProperty]
+        [Obsolete]
+        private bool IsGeneralOptionsAllTheSameEnabled
+        {
+            set => IsApplyToEverywhereEnabled = value;
+        }
 
         [JsonProperty("NameplateFreeCompanyVisibility"), Obsolete]
         private NameplateFreeCompanyVisibility NameplateFreeCompanyVisibilityV1
         {
-            set
-            {
-                foreach (var key in ZoneConfig.Keys)
-                    ZoneConfig[key].NameplateFreeCompanyVisibility = value;
-            }
+            set => GeneralConfigs.GetConfig(ZoneType.Everywhere).NameplateFreeCompanyVisibility = value;
         }
         [JsonProperty("NameplateTitleVisibility"), Obsolete]
         public NameplateTitleVisibility NameplateTitleVisibilityV1
         {
-            set
-            {
-                foreach (var key in ZoneConfig.Keys)
-                    ZoneConfig[key].NameplateTitleVisibility = value;
-            }
+            set => GeneralConfigs.GetConfig(ZoneType.Everywhere).NameplateTitleVisibility = value;
         }
         [JsonProperty("NameplateTitlePosition"), Obsolete]
         public NameplateTitlePosition NameplateTitlePositionV1
         {
-            set
-            {
-                foreach (var key in ZoneConfig.Keys)
-                    ZoneConfig[key].NameplateTitlePosition = value;
-            }
+            set => GeneralConfigs.GetConfig(ZoneType.Everywhere).NameplateTitlePosition = value;
         }
 
         [JsonProperty("IsApplyTagsToAllChatMessagesEnabled"), Obsolete]
         private bool IsApplyTagsToAllChatMessagesEnabledV1
         {
-            set
-            {
-                foreach (var key in ZoneConfig.Keys)
-                    ZoneConfig[key].IsApplyTagsToAllChatMessagesEnabled = value;
-            }
+            set => GeneralConfigs.GetConfig(ZoneType.Everywhere).IsApplyTagsToAllChatMessagesEnabled = value;
         }
 
         #endregion
@@ -122,8 +114,8 @@ namespace PlayerTags.Configuration
 
         public void Save(PluginData pluginData)
         {
-            foreach (var zoneConfig in ZoneConfig)
-                zoneConfig.Value.ApplyTagsData(pluginData.GetTagsData(zoneConfig.Key));
+            foreach (var tagConfig in TagsConfigs)
+                tagConfig.Value.ApplyTagsData(pluginData.GetTagsData(tagConfig.Key));
 
             SavePluginConfig();
 
@@ -174,15 +166,6 @@ namespace PlayerTags.Configuration
             jsonSettings.Converters.Add(new StringEnumConverter());
 
             return jsonSettings;
-        }
-
-        private class GeneralOptionsClass
-        {
-            public NameplateFreeCompanyVisibility NameplateFreeCompanyVisibility = NameplateFreeCompanyVisibility.Default;
-            public NameplateTitleVisibility NameplateTitleVisibility = NameplateTitleVisibility.WhenHasTags;
-            public NameplateTitlePosition NameplateTitlePosition = NameplateTitlePosition.AlwaysAboveName;
-            public DeadPlayerHandling NameplateDeadPlayerHandling = DeadPlayerHandling.Include;
-            public bool IsApplyTagsToAllChatMessagesEnabled = true;
         }
     }
 }
