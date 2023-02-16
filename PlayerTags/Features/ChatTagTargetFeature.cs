@@ -121,7 +121,7 @@ namespace PlayerTags.Features
 
         private void Chat_ChatMessage(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
         {
-            if (m_PluginConfiguration.ZoneConfig[ActivityContextManager.CurrentActivityContext.ZoneType].IsApplyTagsToAllChatMessagesEnabled)
+            if (m_PluginConfiguration.GeneralConfigs.GetConfig(ActivityContextManager.CurrentActivityContext.ZoneType).IsApplyTagsToAllChatMessagesEnabled)
             {
                 AddTagsToChat(sender, type, true);
                 AddTagsToChat(message, type, false);

@@ -113,7 +113,7 @@ namespace PlayerTags.Features
         {
             var beforeTitleBytes = args.Title.Encode();
             var iconID = args.IconId;
-            var generalOptions = m_PluginConfiguration.ZoneConfig[ActivityContextManager.CurrentActivityContext.ZoneType];
+            var generalOptions = m_PluginConfiguration.GeneralConfigs.GetConfig(ActivityContextManager.CurrentActivityContext.ZoneType);
 
             AddTagsToNameplate(args.PlayerCharacter, args.Name, args.Title, args.FreeCompany, ref iconID);
 
@@ -174,12 +174,14 @@ namespace PlayerTags.Features
         /// <param name="freeCompany">The free company text to change.</param>
         private void AddTagsToNameplate(GameObject gameObject, SeString name, SeString title, SeString freeCompany, ref int statusIcon)
         {
-            var tagsData = m_PluginConfiguration.ZoneConfig[ActivityContextManager.CurrentActivityContext.ZoneType];
+            var curZoneType = ActivityContextManager.CurrentActivityContext.ZoneType;
+            var generalConfig = m_PluginConfiguration.GeneralConfigs.GetConfig(curZoneType);
+            var tagsData = m_PluginData.GetTagsData(curZoneType);
             var playerCharacter = gameObject as PlayerCharacter;
             int? newStatusIcon = null;
             NameplateChanges nameplateChanges = GenerateEmptyNameplateChanges(name, title, freeCompany);
 
-            if (playerCharacter != null && (!playerCharacter.IsDead || tagsData.NameplateDeadPlayerHandling != DeadPlayerHandling.Ignore))
+            if (playerCharacter != null && (!playerCharacter.IsDead || generalConfig.NameplateDeadPlayerHandling != DeadPlayerHandling.Ignore))
             {
                 var classJob = playerCharacter.ClassJob;
                 var classJobGameData = classJob?.GameData;
@@ -233,13 +235,13 @@ namespace PlayerTags.Features
             }
 
             // Gray out the nameplate
-            if (playerCharacter != null && playerCharacter.IsDead && tagsData.NameplateDeadPlayerHandling == DeadPlayerHandling.GrayOut)
+            if (playerCharacter != null && playerCharacter.IsDead && generalConfig.NameplateDeadPlayerHandling == DeadPlayerHandling.GrayOut)
                 GrayOutNameplate(gameObject, nameplateChanges);
 
             // Build the final strings out of the payloads
             ApplyNameplateChanges(nameplateChanges);
 
-            if (playerCharacter != null && (!playerCharacter.IsDead || tagsData.NameplateDeadPlayerHandling == DeadPlayerHandling.Include))
+            if (playerCharacter != null && (!playerCharacter.IsDead || generalConfig.NameplateDeadPlayerHandling == DeadPlayerHandling.Include))
             {
                 // An additional step to apply text color to additional locations
                 Identity identity = tagsData.GetIdentity(playerCharacter);
