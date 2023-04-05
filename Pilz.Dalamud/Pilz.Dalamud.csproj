@@ -21,9 +21,10 @@
         <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
         <Copyright>Pilzinsel64</Copyright>
         <PackageProjectUrl>https://github.com/Pilzinsel64/Pilz.Dalamud</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/Pilzinsel64/Pilz.Dalamud</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <Version>0.2.0</Version>
+        <Version>0.3.1</Version>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
     </PropertyGroup>
   
@@ -56,6 +57,10 @@
             <HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
             <Private>false</Private>
         </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 
 </Project>

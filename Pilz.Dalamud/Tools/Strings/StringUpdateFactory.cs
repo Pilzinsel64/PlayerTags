@@ -98,14 +98,14 @@ namespace Pilz.Dalamud.Tools.Strings
                 if (tagPosition == StringPosition.Before)
                 {
                     var significantPayloads = payloads.Where(payload => payload is TextPayload || payload is IconPayload);
-                    if (significantPayloads.Last() is TextPayload)
+                    if (significantPayloads.LastOrDefault() is TextPayload)
                         payloads.Add(getNewTextPayload());
                 }
                 // Decide whether to add a space to the beginning
                 else if (tagPosition == StringPosition.After)
                 {
                     var significantPayloads = payloads.Where(payload => payload is TextPayload || payload is IconPayload);
-                    if (significantPayloads.First() is TextPayload)
+                    if (significantPayloads.FirstOrDefault() is TextPayload)
                         payloads.Insert(0, getNewTextPayload());
                 }
             }

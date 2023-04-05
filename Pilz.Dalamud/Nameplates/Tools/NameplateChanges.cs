@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pilz.Dalamud.Nameplates.EventArgs;
 using Pilz.Dalamud.Tools.Strings;
 
 namespace Pilz.Dalamud.Nameplates.Tools
@@ -16,6 +17,13 @@ namespace Pilz.Dalamud.Nameplates.Tools
             changes.Add(NameplateElements.Title, new());
             changes.Add(NameplateElements.Name, new());
             changes.Add(NameplateElements.FreeCompany, new());
+        }
+
+        public NameplateChanges(AddonNamePlate_SetPlayerNameManagedEventArgs eventArgs) : this()
+        {
+            GetProps(NameplateElements.Title).Destination = eventArgs.Title;
+            GetProps(NameplateElements.Name).Destination = eventArgs.Name;
+            GetProps(NameplateElements.FreeCompany).Destination = eventArgs.FreeCompany;
         }
 
         /// <summary>
