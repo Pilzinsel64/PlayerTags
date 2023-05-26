@@ -75,7 +75,7 @@ namespace PlayerTags
             switch (command)
             {
                 case c_CommandName:
-                    if (string.IsNullOrWhiteSpace(command))
+                    if (string.IsNullOrWhiteSpace(arguments))
                         UiBuilder_OpenConfigUi();
                     else
                     {
