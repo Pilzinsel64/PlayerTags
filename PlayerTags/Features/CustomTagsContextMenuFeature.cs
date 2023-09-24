@@ -1,6 +1,7 @@
 ﻿using Dalamud.ContextMenu;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Logging;
+using Dalamud.Plugin;
 using PlayerTags.Configuration;
 using PlayerTags.Data;
 using PlayerTags.Resources;
@@ -33,9 +34,9 @@ namespace PlayerTags.Features
 
         private DalamudContextMenu? m_ContextMenu;
 
-        public CustomTagsContextMenuFeature(PluginConfiguration pluginConfiguration, PluginData pluginData) : base(pluginConfiguration, pluginData)
+        public CustomTagsContextMenuFeature(PluginConfiguration pluginConfiguration, PluginData pluginData, DalamudPluginInterface pluginInterface) : base(pluginConfiguration, pluginData)
         {
-            m_ContextMenu = new DalamudContextMenu();
+            m_ContextMenu = new DalamudContextMenu(pluginInterface);
             m_ContextMenu.OnOpenGameObjectContextMenu += ContextMenuHooks_ContextMenuOpened;
         }
 

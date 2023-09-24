@@ -3,6 +3,7 @@ using Dalamud.Logging;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Internal;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using Lumina.Excel.GeneratedSheets;
 using PlayerTags.Configuration;
 using PlayerTags.Data;
 using PlayerTags.Features;
@@ -16,29 +17,29 @@ namespace PlayerTags
 {
     public sealed class Plugin : IDalamudPlugin
     {
-        public string Name => "Player Tags";
         private const string c_CommandName = "/playertags";
         private const string c_SubCommandName_EnableGlobal = "enableglobal";
         private const string c_CommandArg_On = "on";
         private const string c_CommandArg_Off = "off";
         private const string c_CommandArg_toggle = "toggle";
 
-        private PluginConfiguration m_PluginConfiguration;
-        private PluginData m_PluginData;
-        private PluginConfigurationUI m_PluginConfigurationUI;
+        private PluginConfiguration pluginConfiguration = null;
+        private PluginData pluginData = null;
+        private PluginConfigurationUI pluginConfigurationUI = null;
+        private DalamudPluginInterface pluginInterface = null;
 
-        private CustomTagsContextMenuFeature m_CustomTagsContextMenuFeature;
-        private NameplateTagTargetFeature m_NameplatesTagTargetFeature;
-        private ChatTagTargetFeature m_ChatTagTargetFeature;
+        private CustomTagsContextMenuFeature customTagsContextMenuFeature;
+        private NameplateTagTargetFeature nameplatesTagTargetFeature;
+        private ChatTagTargetFeature chatTagTargetFeature;
 
         public Plugin(DalamudPluginInterface pluginInterface)
         {
             PluginServices.Initialize(pluginInterface);
             Pilz.Dalamud.PluginServices.Initialize(pluginInterface);
 
-            m_PluginConfiguration = PluginConfiguration.LoadPluginConfig() ?? new PluginConfiguration();
-            m_PluginData = new PluginData(m_PluginConfiguration);
-            m_PluginConfigurationUI = new PluginConfigurationUI(m_PluginConfiguration, m_PluginData);
+            pluginConfiguration = PluginConfiguration.LoadPluginConfig() ?? new PluginConfiguration();
+            pluginData = new PluginData(pluginConfiguration);
+            pluginConfigurationUI = new PluginConfigurationUI(pluginConfiguration, pluginData);
 
             Localizer.SetLanguage(PluginServices.DalamudPluginInterface.UiLanguage);
             PluginServices.DalamudPluginInterface.LanguageChanged += DalamudPluginInterface_LanguageChanged;
@@ -49,16 +50,16 @@ namespace PlayerTags
             {
                 HelpMessage = Resources.Strings.Loc_Command_playertags_v2
             });
-            m_CustomTagsContextMenuFeature = new CustomTagsContextMenuFeature(m_PluginConfiguration, m_PluginData);
-            m_NameplatesTagTargetFeature = new NameplateTagTargetFeature(m_PluginConfiguration, m_PluginData);
-            m_ChatTagTargetFeature = new ChatTagTargetFeature(m_PluginConfiguration, m_PluginData);
+            customTagsContextMenuFeature = new CustomTagsContextMenuFeature(pluginConfiguration, pluginData, pluginInterface);
+            nameplatesTagTargetFeature = new NameplateTagTargetFeature(pluginConfiguration, pluginData);
+            chatTagTargetFeature = new ChatTagTargetFeature(pluginConfiguration, pluginData);
         }
 
         public void Dispose()
         {
-            m_ChatTagTargetFeature.Dispose();
-            m_NameplatesTagTargetFeature.Dispose();
-            m_CustomTagsContextMenuFeature.Dispose();
+            chatTagTargetFeature.Dispose();
+            nameplatesTagTargetFeature.Dispose();
+            customTagsContextMenuFeature.Dispose();
             PluginServices.DalamudPluginInterface.LanguageChanged -= DalamudPluginInterface_LanguageChanged;
             PluginServices.CommandManager.RemoveHandler(c_CommandName);
             PluginServices.DalamudPluginInterface.UiBuilder.OpenConfigUi -= UiBuilder_OpenConfigUi;
@@ -90,13 +91,13 @@ namespace PlayerTags
                                         switch (lowerArgs[0])
                                         {
                                             case c_CommandArg_On:
-                                                m_PluginConfiguration.EnabledGlobal = true;
+                                                pluginConfiguration.EnabledGlobal = true;
                                                 break;
                                             case c_CommandArg_Off:
-                                                m_PluginConfiguration.EnabledGlobal = false;
+                                                pluginConfiguration.EnabledGlobal = false;
                                                 break;
                                             case c_CommandArg_toggle:
-                                                m_PluginConfiguration.EnabledGlobal = !m_PluginConfiguration.EnabledGlobal;
+                                                pluginConfiguration.EnabledGlobal = !pluginConfiguration.EnabledGlobal;
                                                 break;
                                         }
                                     }
@@ -110,14 +111,14 @@ namespace PlayerTags
 
         private void UiBuilder_Draw()
         {
-            if (m_PluginConfiguration.IsVisible)
-                m_PluginConfigurationUI.Draw();
+            if (pluginConfiguration.IsVisible)
+                pluginConfigurationUI.Draw();
         }
 
         private void UiBuilder_OpenConfigUi()
         {
-            m_PluginConfiguration.IsVisible = true;
-            m_PluginConfiguration.Save(m_PluginData);
+            pluginConfiguration.IsVisible = true;
+            pluginConfiguration.Save(pluginData);
         }
     }
 }
