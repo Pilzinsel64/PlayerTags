@@ -14,6 +14,8 @@ namespace PlayerTags
     public class PluginServices
     {
         [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; set; } = null!;
+        [PluginService] public static IPluginLog PluginLog { get; set; } = null;
+        [PluginService] public static IGameConfig GameConfig { get; set; } = null;
         [PluginService] public static IChatGui ChatGui { get; set; } = null!;
         [PluginService] public static IClientState ClientState { get; set; } = null!;
         [PluginService] public static ICommandManager CommandManager { get; set; } = null!;

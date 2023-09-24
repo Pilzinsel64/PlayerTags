@@ -24,7 +24,7 @@ namespace PlayerTags
                     }
                     catch (Exception ex)
                     {
-                        PluginLog.Error(ex, $"RandomNameGenerator failed to read adjectives");
+                        PluginServices.PluginLog.Error(ex, $"RandomNameGenerator failed to read adjectives");
                     }
                 }
 
@@ -50,7 +50,7 @@ namespace PlayerTags
                     }
                     catch (Exception ex)
                     {
-                        PluginLog.Error(ex, $"RandomNameGenerator failed to read nouns");
+                        PluginServices.PluginLog.Error(ex, $"RandomNameGenerator failed to read nouns");
                     }
                 }
 

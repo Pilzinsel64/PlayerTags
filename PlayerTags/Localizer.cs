@@ -55,7 +55,7 @@ namespace PlayerTags
             if (value != null)
                 return value;
 
-            PluginLog.Error($"Failed to get localized string for id {localizedStringId}");
+            PluginServices.PluginLog.Error($"Failed to get localized string for id {localizedStringId}");
             return localizedStringId;
         }
     }

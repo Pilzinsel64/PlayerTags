@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PlayerTags.Configuration.GameConfig
 {
-    public enum LogNameType
+    public enum LogNameType : uint
     {
         FullName,
         LastNameShorted,

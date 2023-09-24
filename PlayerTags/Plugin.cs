@@ -26,7 +26,6 @@ namespace PlayerTags
         private PluginConfiguration pluginConfiguration = null;
         private PluginData pluginData = null;
         private PluginConfigurationUI pluginConfigurationUI = null;
-        private DalamudPluginInterface pluginInterface = null;
 
         private CustomTagsContextMenuFeature customTagsContextMenuFeature;
         private NameplateTagTargetFeature nameplatesTagTargetFeature;

@@ -803,7 +803,7 @@ namespace PlayerTags.Configuration
                     }
                     else
                     {
-                        PluginLog.Warning($"Rendering for inheritable option not implemented: {selectedInheritable.Inheritable.Key}");
+                        PluginServices.PluginLog.Warning($"Rendering for inheritable option not implemented: {selectedInheritable.Inheritable.Key}");
                     }
                 }
             }

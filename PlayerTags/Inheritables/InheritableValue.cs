@@ -68,7 +68,7 @@ namespace PlayerTags.Inheritables
                 else if (inheritableData.Value == null)
                 {
                     // This should never happen
-                    PluginLog.Error($"Expected value of type {Value.GetType()} but received null");
+                    PluginServices.PluginLog.Error($"Expected value of type {Value.GetType()} but received null");
                 }
                 else if (typeof(T) == typeof(Guid) && inheritableData.Value is string strValue)
                 {
@@ -81,7 +81,7 @@ namespace PlayerTags.Inheritables
             }
             catch (Exception ex)
             {
-                PluginLog.Error(ex, $"Failed to convert {inheritableData.Value.GetType()} value '{inheritableData.Value}' to {Value.GetType()}");
+                PluginServices.PluginLog.Error(ex, $"Failed to convert {inheritableData.Value.GetType()} value '{inheritableData.Value}' to {Value.GetType()}");
             }
         }
 

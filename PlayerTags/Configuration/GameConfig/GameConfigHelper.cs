@@ -30,45 +30,19 @@ namespace PlayerTags.Configuration.GameConfig
             }
         }
 
-        private int? GetIntValue(ConfigOption option)
+        private uint? GetIntValue(ConfigOption option)
         {
-            int? value = null;
-
-            unsafe
-            {
-                var index = configModule->GetIndex(option);
-                if (index.HasValue)
-                    value = configModule->GetIntValue(index.Value);
-            }
-
-            return value;
+            if (PluginServices.GameConfig.UiConfig.TryGetUInt(nameof(ConfigOption.LogNameType), out var value))
+                return value;
+            return null;
         }
 
         public LogNameType? GetLogNameType()
         {
-            LogNameType? logNameType = null;
-            int? value = GetIntValue(ConfigOption.LogNameType);
-
-            if (value.HasValue)
-            {
-                switch (value)
-                {
-                    case 0:
-                        logNameType = LogNameType.FullName;
-                        break;
-                    case 1:
-                        logNameType = LogNameType.LastNameShorted;
-                        break;
-                    case 2:
-                        logNameType = LogNameType.FirstNameShorted;
-                        break;
-                    case 3:
-                        logNameType = LogNameType.Initials;
-                        break;
-                }
-            }
-
-            return logNameType;
+            uint? value = GetIntValue(ConfigOption.LogNameType);
+            if (value != null)
+                return (LogNameType)value;
+            return null;
         }
     }
 }

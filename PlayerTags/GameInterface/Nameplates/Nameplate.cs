@@ -58,7 +58,7 @@ namespace PlayerTags.GameInterface.Nameplates
             }
             catch (Exception ex)
             {
-                PluginLog.Error(ex, $"SetPlayerNameplateDetour");
+                PluginServices.PluginLog.Error(ex, $"SetPlayerNameplateDetour");
             }
         }
     }
