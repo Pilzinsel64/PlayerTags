@@ -7,20 +7,22 @@ using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
 using Dalamud.IoC;
 using Dalamud.Plugin;
+using Dalamud.Plugin.Services;
 
 namespace PlayerTags
 {
     public class PluginServices
     {
-        [PluginService] public static ChatGui ChatGui { get; set; } = null!;
-        [PluginService] public static ClientState ClientState { get; set; } = null!;
-        [PluginService] public static CommandManager CommandManager { get; set; } = null!;
         [PluginService] public static DalamudPluginInterface DalamudPluginInterface { get; set; } = null!;
-        [PluginService] public static DataManager DataManager { get; set; } = null!;
-        [PluginService] public static Framework Framework { get; set; } = null!;
-        [PluginService] public static GameGui GameGui { get; set; } = null!;
-        [PluginService] public static ObjectTable ObjectTable { get; set; } = null!;
-        [PluginService] public static PartyList PartyList { get; set; } = null!;
+        [PluginService] public static IChatGui ChatGui { get; set; } = null!;
+        [PluginService] public static IClientState ClientState { get; set; } = null!;
+        [PluginService] public static ICommandManager CommandManager { get; set; } = null!;
+        [PluginService] public static IDataManager DataManager { get; set; } = null!;
+        [PluginService] public static IFramework Framework { get; set; } = null!;
+        [PluginService] public static IGameGui GameGui { get; set; } = null!;
+        [PluginService] public static IObjectTable ObjectTable { get; set; } = null!;
+        [PluginService] public static IPartyList PartyList { get; set; } = null!;
+        [PluginService] public static IGameInteropProvider GameInteropProvider { get; set; } = null;
 
         public static void Initialize(DalamudPluginInterface pluginInterface)
         {

@@ -75,12 +75,12 @@ namespace PlayerTags.Features
             }
         }
 
-        private void ClientState_Login(object? sender, EventArgs e)
+        private void ClientState_Login()
         {
             Hook();
         }
 
-        private void ClientState_Logout(object? sender, EventArgs e)
+        private void ClientState_Logout()
         {
             Unhook();
         }
